@@ -74,6 +74,32 @@ export default function NotesList() {
     setModalLoading(false)
     load() 
   }
+    const handleDeleteNote = async (noteId) => {
+    try {
+      const res = await fetch(`/api/notes/${noteId}`, {
+        method: 'DELETE',
+      })
+      
+      const json = await res.json()
+      
+      if (json.success) {
+        // Close modal if we're deleting the currently selected note
+        if (selected && selected.id === noteId) {
+          setShowModal(false)
+          setSelected(null)
+        }
+        
+        // Refresh notes list
+        load()
+      } else {
+        console.error('Delete failed:', json.error)
+        alert('Failed to delete note')
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      alert('Failed to delete note')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -126,6 +152,7 @@ export default function NotesList() {
                   key={note.id}
                   note={note}
                   onSelect={handleNoteSelect}
+                  onDelete={handleDeleteNote}
                 />
               ))}
             </div>
