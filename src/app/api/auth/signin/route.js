@@ -8,7 +8,6 @@ export async function POST(req) {
   try {
     const body = await req.json()
 
-    /* 1️⃣  validate only email + password */
     const parsed = signInSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json({
@@ -19,7 +18,6 @@ export async function POST(req) {
 
     const { email, password } = parsed.data
 
-    /* 2️⃣  locate the user */
     const user = await db.user.findUnique({ where: { email } })
     if (!user) {
       return NextResponse.json({
@@ -28,7 +26,6 @@ export async function POST(req) {
       }, { status: 401 })
     }
 
-    /* 3️⃣  check password */
     const ok = await verifyPassword(password, user.password)
     if (!ok) {
       return NextResponse.json({
@@ -37,7 +34,6 @@ export async function POST(req) {
       }, { status: 401 })
     }
 
-    /* 4️⃣  create JWT & cookie */
     const token = generateToken({ userId: user.id, email, name: user.name })
 
     const safe = {

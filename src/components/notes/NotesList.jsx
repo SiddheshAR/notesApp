@@ -42,7 +42,6 @@ export default function NotesList() {
       const json = await res.json()
       
       if (json.success) {
-        console.log('Loaded note data:', json.data) // Debug log
         setSelected(json.data)
       } else {
         console.error('Failed to load note:', json.error)
@@ -59,7 +58,6 @@ export default function NotesList() {
   }
 
   const handleAddNote = () => {
-    console.log('Creating new note') // Debug log
     setSelected(null)
     setShowModal(true)
   }
@@ -71,7 +69,6 @@ export default function NotesList() {
   }
 
   const handleNoteSaved = () => {
-    console.log('Note saved, refreshing list') // Debug log
     setShowModal(false)
     setSelected(null)
     setModalLoading(false)

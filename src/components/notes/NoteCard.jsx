@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 
 export default function NoteCard({ note, onSelect }) {
   const handleClick = () => {
-    console.log('Note clicked:', note.id) // Debug log
+    console.log('Note clicked:', note.id)
     onSelect(note.id)
   }
 
@@ -13,12 +13,10 @@ export default function NoteCard({ note, onSelect }) {
       className="group cursor-pointer bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300"
       onClick={handleClick}
     >
-      {/* Title */}
       <h3 className="font-bold text-lg text-gray-900 group-hover:text-blue-700 transition-colors duration-200 mb-3 line-clamp-2">
         {note.title}
       </h3>
       
-      {/* Content preview */}
       <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-4 min-h-[4rem]">
         {note.content || (
           <span className="text-gray-400 italic">No content</span>

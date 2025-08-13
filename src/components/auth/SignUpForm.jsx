@@ -25,10 +25,8 @@ export default function SignUpForm() {
     resolver: zodResolver(signUpSchema)
   })
 
-  // Watch password for strength check
   const password = useWatch({ control, name: 'password', defaultValue: '' })
 
-  // Simple password strength check
   const getPasswordStrength = (pwd) => {
     if (!pwd) return null
     
@@ -140,7 +138,6 @@ export default function SignUpForm() {
                 </button>
               </div>
               
-              {/* Simple strength indicator */}
               {passwordStrength && (
                 <p className={`mt-1 text-sm font-medium ${passwordStrength.color}`}>
                   Password strength: {passwordStrength.level}

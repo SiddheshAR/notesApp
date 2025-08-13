@@ -8,7 +8,6 @@ export async function POST(request) {
   try {
     const body = await request.json()
     
-    // Validate with Zod
     const validationResult = signUpSchema.safeParse(body)
     if (!validationResult.success) {
       return NextResponse.json({
@@ -19,7 +18,6 @@ export async function POST(request) {
 
     const { name, email, password } = validationResult.data
 
-    // Check if user already exists
     const existingUser = await db.user.findUnique({
       where: { email }
     })
@@ -31,7 +29,6 @@ export async function POST(request) {
       }, { status: 409 })
     }
 
-    // Hash password and create user
     const hashedPassword = await hashPassword(password)
     const user = await db.user.create({
       data: {
@@ -41,14 +38,12 @@ export async function POST(request) {
       }
     })
 
-    // Generate token
     const token = generateToken({
       userId: user.id,
       email: user.email,
       name: user.name
     })
 
-    // Remove password from response
     const safeUser = {
       id: user.id,
       name: user.name,
@@ -57,7 +52,6 @@ export async function POST(request) {
       updatedAt: user.updatedAt
     }
 
-    // Set httpOnly cookie
     const response = NextResponse.json({
       success: true,
       data: safeUser,
@@ -68,7 +62,7 @@ export async function POST(request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
+      maxAge: 60 * 60 * 24 * 7
     })
 
     return response

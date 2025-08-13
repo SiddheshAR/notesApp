@@ -8,12 +8,11 @@ export async function POST() {
       message: 'Signed out successfully'
     })
 
-    // Clear the auth cookie
     response.cookies.set('auth-token', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 0 // Expire immediately
+      maxAge: 0  
     })
 
     return response

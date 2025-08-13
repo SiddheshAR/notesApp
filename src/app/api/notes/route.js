@@ -5,7 +5,6 @@ import { db } from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
 import { z } from 'zod'
 
-/* zod schema for a new note */
 const noteSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().optional(),
