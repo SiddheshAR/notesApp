@@ -3,10 +3,15 @@
 import { format } from 'date-fns'
 
 export default function NoteCard({ note, onSelect }) {
+  const handleClick = () => {
+    console.log('Note clicked:', note.id) // Debug log
+    onSelect(note.id)
+  }
+
   return (
     <div
       className="group cursor-pointer bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300"
-      onClick={() => onSelect(note.id)}
+      onClick={handleClick}
     >
       {/* Title */}
       <h3 className="font-bold text-lg text-gray-900 group-hover:text-blue-700 transition-colors duration-200 mb-3 line-clamp-2">
@@ -30,7 +35,6 @@ export default function NoteCard({ note, onSelect }) {
         </span>
       </div>
 
-      {/* Hover indicator */}
       <div className="absolute top-4 right-4 w-2 h-2 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
     </div>
   )

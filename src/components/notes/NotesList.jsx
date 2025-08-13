@@ -12,30 +12,54 @@ export default function NotesList() {
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [modalLoading, setModalLoading] = useState(false)
 
-  /* fetch notes */
   const load = async () => {
     setLoading(true)
-    const res = await fetch('/api/notes')
-    const json = await res.json()
-    setNotes(json.data || [])
+    try {
+      const res = await fetch('/api/notes')
+      const json = await res.json()
+      setNotes(json.data || [])
+    } catch (error) {
+      console.error('Failed to load notes:', error)
+    }
     setLoading(false)
   }
+  
   useEffect(() => { load() }, [])
 
-  /* filter + sort */
   const filtered = notes
     .filter(n => n.title.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt))
 
   const handleNoteSelect = async (id) => {
-    const res = await fetch(`/api/notes/${id}`)
-    const json = await res.json()
-    setSelected(json.data)
-    setShowModal(true)
+    console.log('Selecting note for edit:', id) // Debug log
+    setModalLoading(true)
+    setShowModal(true) 
+    
+    try {
+      const res = await fetch(`/api/notes/${id}`)
+      const json = await res.json()
+      
+      if (json.success) {
+        console.log('Loaded note data:', json.data) // Debug log
+        setSelected(json.data)
+      } else {
+        console.error('Failed to load note:', json.error)
+        alert('Failed to load note for editing')
+        setShowModal(false)
+      }
+    } catch (error) {
+      console.error('Error loading note:', error)
+      alert('Failed to load note for editing')
+      setShowModal(false)
+    }
+    
+    setModalLoading(false)
   }
 
   const handleAddNote = () => {
+    console.log('Creating new note') // Debug log
     setSelected(null)
     setShowModal(true)
   }
@@ -43,12 +67,15 @@ export default function NotesList() {
   const handleModalClose = () => {
     setShowModal(false)
     setSelected(null)
+    setModalLoading(false)
   }
 
   const handleNoteSaved = () => {
+    console.log('Note saved, refreshing list') // Debug log
     setShowModal(false)
     setSelected(null)
-    load()
+    setModalLoading(false)
+    load() 
   }
 
   return (
@@ -136,11 +163,18 @@ export default function NotesList() {
         onClose={handleModalClose}
         title={selected ? 'Edit Note' : 'Create New Note'}
       >
-        <NoteForm
-          note={selected}
-          onSaved={handleNoteSaved}
-          onCancel={handleModalClose}
-        />
+        {modalLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 size={24} className="animate-spin text-blue-600" />
+            <span className="ml-2 text-gray-600">Loading note...</span>
+          </div>
+        ) : (
+          <NoteForm
+            note={selected}
+            onSaved={handleNoteSaved}
+            onCancel={handleModalClose}
+          />
+        )}
       </Modal>
     </div>
   )
